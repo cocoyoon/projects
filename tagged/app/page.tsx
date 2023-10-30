@@ -10,7 +10,7 @@ export default function Home() {
       {/* Search */}
       <Search />
       { /* Main */ }
-      <Main />
+      {/* <Main /> */}
       { /* Sub */}
 
       <h1>tagged-app</h1>

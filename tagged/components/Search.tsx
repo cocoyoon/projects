@@ -7,7 +7,7 @@ const custom_font = localFont({ src: '../fonts/utah-condensed-bold.ttf' })
 function Search() {
     return (
         <div className="flex">
-            <form className="flex flex-1 bg-orange-600 border-solid border-black border-b-2 items-center px-2">
+            <form className="flex flex-1 bg-orange-600 border-solid border-black border-b items-center px-2">
                 <MagnifyingGlassIcon className = "w-5 h-5 text-black" />
                 <input type="text" placeholder='Search' className='flex-1 outline-none p-2 bg-orange-600 placeholder-black' />
             </form>
