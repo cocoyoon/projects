@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Main from "@/components/Main";
 import Search from "@/components/Search";
+import Section from "@/components/Section";
 
 export default function Home() {
   return (
@@ -10,10 +11,9 @@ export default function Home() {
       {/* Search */}
       <Search />
       { /* Main */ }
-      {/* <Main /> */}
+      <Main />
       { /* Sub */}
-
-      <h1>tagged-app</h1>
+      <Section name="STYLES" />
     </main>
   )
 }
