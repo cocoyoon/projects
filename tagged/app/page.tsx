@@ -1,19 +1,15 @@
-import Header from "@/components/Header";
-import Main from "@/components/Main";
-import Search from "@/components/Search";
-import Section from "@/components/Section";
+import Header from "@/app/Header";
+import Main from "@/app/Main";
 
 export default function Home() {
   return (
     <main>
-      { /* Header */}
+      {/* Header */}
       <Header />
-      {/* Search */}
-      <Search />
-      { /* Main */ }
+      {/* Main */}
       <Main />
-      { /* Sub */}
-      <Section name="STYLES" />
+      {/* Sub */}
+      {/* <Section name="STYLES" /> */}
     </main>
-  )
+  );
 }
