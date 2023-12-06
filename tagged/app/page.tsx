@@ -1,11 +1,8 @@
-import Header from "@/app/Header";
-import Main from "@/app/Main";
+import Main from "@/components/Main";
 
 export default function Home() {
   return (
     <main>
-      {/* Header */}
-      <Header />
       {/* Main */}
       <Main />
       {/* Sub */}
