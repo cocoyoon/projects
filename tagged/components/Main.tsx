@@ -2,7 +2,7 @@ import Image from "next/image";
 import localFont from "next/font/local";
 import Link from "next/link";
 import { Client, Storage } from "appwrite";
-import { ID } from "@/app/appwrite";
+import { init_client, init_storage, get_file_preview } from "@/app/appwrite";
 
 const custom_font = localFont({ src: "../fonts/utah-condensed-bold.ttf" });
 
@@ -20,15 +20,12 @@ const fetchAllImages = async (storage: Storage, bucket_id: string) => {
 };
 
 async function Main() {
-  const project_id: string | undefined = process.env.APPWRITE_PROJECT_ID;
   const bucket_id: string | undefined = process.env.IMAGES_BUCKET_ID;
-  if (!project_id || !bucket_id) {
+  if (!bucket_id) {
     throw new Error("ID not provided");
   }
-  const client = new Client()
-    .setEndpoint("https://cloud.appwrite.io/v1")
-    .setProject(project_id);
-  const storage_ref = new Storage(client);
+  const client = init_client("https://cloud.appwrite.io/v1");
+  const storage_ref = init_storage(client);
   const images = await fetchAllImages(storage_ref, bucket_id)
     .then((data) => {
       return data;
@@ -40,16 +37,14 @@ async function Main() {
   return (
     <div className="grid sm:grid-cols-3 md:grid-cols-6 gap-0">
       {images && images.files ? (
-        images.files.map((file_id) => (
-          <div key={file_id.$id}>
-            <Link href={`/${file_id.$id}`} prefetch={false}>
+        images.files.map((file) => (
+          <div key={file.$id}>
+            <Link href={`images/${file.$id}`} prefetch={false}>
               <Image
                 alt="LOADING"
                 className="w-full h-auto border border-gray-300 dark:border-gray-700"
                 height="250"
-                src={storage_ref
-                  .getFilePreview(bucket_id, file_id.$id)
-                  .toString()}
+                src={get_file_preview(storage_ref, file.$id)}
                 style={{
                   aspectRatio: "200/250",
                   objectFit: "cover",

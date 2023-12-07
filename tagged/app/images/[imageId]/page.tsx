@@ -3,7 +3,22 @@
  * @see https://v0.dev/t/HgS8cvvQI49
  */
 
-export default function Component() {
+import { init_client, init_storage, get_file_preview } from "@/app/appwrite";
+
+type PageProps = {
+  params: {
+    imageId: string;
+  };
+};
+
+function get_image(image_id: string): string {
+  const client = init_client("https://cloud.appwrite.io/v1");
+  const storage_ref = init_storage(client);
+  return get_file_preview(storage_ref, image_id);
+}
+
+function ImageDetail({ params: { imageId } }: PageProps) {
+  const image_src = get_image(imageId);
   return (
     <div key="1" className="flex flex-col bg-white">
       <div className="grid grid-cols-3 gap-4 p-4 w-3/5 mx-auto">
@@ -12,7 +27,7 @@ export default function Component() {
             alt="Content"
             className="w-full h-auto rounded-lg bg-gray-300"
             height="500"
-            src="/next.svg"
+            src={image_src}
             style={{
               aspectRatio: "500/500",
               objectFit: "fill",
@@ -96,3 +111,5 @@ export default function Component() {
     </div>
   );
 }
+
+export default ImageDetail;
