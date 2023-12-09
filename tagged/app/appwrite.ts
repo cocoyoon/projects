@@ -25,3 +25,9 @@ export function get_file_preview(
   let image_src = storage_ref.getFilePreview(bucket_id, file_id).toString();
   return image_src;
 }
+
+export function get_image(image_id: string): string {
+  const client = init_client("https://cloud.appwrite.io/v1");
+  const storage_ref = init_storage(client);
+  return get_file_preview(storage_ref, image_id);
+}

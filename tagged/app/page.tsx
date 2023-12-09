@@ -5,7 +5,6 @@ export default function Home() {
     <main>
       {/* Main */}
       <Main />
-      {/* Sub */}
       {/* <Section name="STYLES" /> */}
     </main>
   );

@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import Link from "next/link";
 import { Client, Storage } from "appwrite";
 import { init_client, init_storage, get_file_preview } from "@/app/appwrite";
+import AppContextProvider from "./hooks/context";
 
 const custom_font = localFont({ src: "../fonts/utah-condensed-bold.ttf" });
 
@@ -39,19 +40,22 @@ async function Main() {
       {images && images.files ? (
         images.files.map((file) => (
           <div key={file.$id}>
-            <Link href={`images/${file.$id}`} prefetch={false}>
-              <Image
-                alt="LOADING"
-                className="w-full h-auto border border-gray-300 dark:border-gray-700"
-                height="250"
-                src={get_file_preview(storage_ref, file.$id)}
-                style={{
-                  aspectRatio: "200/250",
-                  objectFit: "cover",
-                }}
-                width="200"
-              />
-            </Link>
+            <AppContextProvider>
+              <Link href={`images/${file.$id}`} prefetch={false}>
+                {/* ToDo: Optimize */}
+                <Image
+                  alt="LOADING"
+                  className="w-full h-auto border border-gray-300 dark:border-gray-700"
+                  height="250"
+                  src={get_file_preview(storage_ref, file.$id)}
+                  style={{
+                    aspectRatio: "200/250",
+                    objectFit: "cover",
+                  }}
+                  width="200"
+                />
+              </Link>
+            </AppContextProvider>
           </div>
         ))
       ) : (
