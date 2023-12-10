@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
+import AppContextProvider from "@/components/hooks/context";
 
 export const metadata: Metadata = {
-  title: "TAGGED",
-  description: "The Fashionpedia which finds the styles",
+  title: "BrandBySam",
+  description: "Powered by Segment Anything by Meta",
 };
 
 export default function RootLayout({
@@ -13,11 +14,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>
-        <Header />
-        {children}
-      </body>
-    </html>
+    <AppContextProvider>
+      <html lang="en">
+        <body>
+          <Header />
+          {children}
+        </body>
+      </html>
+    </AppContextProvider>
   );
 }

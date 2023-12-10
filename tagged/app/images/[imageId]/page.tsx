@@ -6,10 +6,8 @@
 "use client";
 
 import axios from "axios";
-import npyjs from "npyjs";
 import * as ort from "onnxruntime-web";
 import { useState, useEffect, useContext } from "react";
-// import Image from "next/image";
 import { Client, Storage } from "appwrite";
 import { handleImageScale } from "@/components/helpers/scaleHelper";
 import { modelScaleProps } from "@/components/helpers/Interfaces";
@@ -17,7 +15,6 @@ import { onnxMaskToImage } from "@/components/helpers/maskUtils";
 import { modelData } from "@/components/helpers/onnxModelAPI";
 import AppContext from "@/components/hooks/createContext";
 import Stage from "@/components/Stage";
-import AppContextProvider from "@/components/hooks/context";
 
 type PageProps = {
   params: {
@@ -42,6 +39,7 @@ function ImageDetail({ params: { imageId } }: PageProps) {
   const loadImage = async (url: URL) => {
     try {
       const img = new Image();
+      console.log(url.href);
       img.src = url.href;
       img.onload = () => {
         const { height, width, samScale } = handleImageScale(img);
@@ -59,29 +57,25 @@ function ImageDetail({ params: { imageId } }: PageProps) {
     }
   };
 
-  // Decode a Numpy file into a tensor.
-  const set_npy_tensor = (array_buffer: any) => {
-    let npLoader = new npyjs();
-    const npArray = npLoader.parse(array_buffer);
-    const tensor = new ort.Tensor(npArray.data, npArray.shape);
-    console.log("Complete convert to tensor!");
-    setTensor(tensor);
-  };
-
   useEffect(() => {
     console.log(imageId);
     const project_id = process.env.NEXT_PUBLIC_PROJECT_ID;
+    const end_point = process.env.NEXT_PUBLIC_APPWRITE_END_POINT;
     const bucket_id: string | undefined =
       process.env.NEXT_PUBLIC_IMAGES_BUCKET_ID;
-    if (!project_id || !bucket_id) {
+    if (!project_id || !bucket_id || !end_point) {
       throw new Error("ID not provided");
     }
-    const client = new Client()
-      .setEndpoint("https://cloud.appwrite.io/v1")
-      .setProject(project_id);
+    const client = new Client().setEndpoint(end_point).setProject(project_id);
     const storage_ref = new Storage(client);
+    let image_src = storage_ref.getFilePreview(bucket_id, imageId);
+    // Load the image into the model.
+    loadImage(image_src);
+    set_image_src(image_src.toString());
+    const request_uri = server_end_point("process_image");
+    console.log(request_uri);
     axios
-      .post(`http://127.0.0.1:8000/process_image`, {
+      .post(request_uri, {
         image_id: imageId,
       })
       .then((response) => {
@@ -98,11 +92,6 @@ function ImageDetail({ params: { imageId } }: PageProps) {
             const model = await ort.InferenceSession.create(onnx_bytes);
             setModel(model);
 
-            let image_src = storage_ref.getFilePreview(bucket_id, imageId);
-            // Load the image into the model.
-            loadImage(image_src);
-            set_image_src(image_src.toString());
-
             const img_embedding = atob(res.img_embedding);
             var uint8arr = new Uint8Array(img_embedding.length);
             for (var i = 0; i < img_embedding.length; i++) {
@@ -112,7 +101,7 @@ function ImageDetail({ params: { imageId } }: PageProps) {
             console.log("float32Arr", float32Arr);
             const tensor = new ort.Tensor(
               "float32",
-              float32Arr,
+              float32Arr.slice(32, float32Arr.length),
               [1, 256, 64, 64]
             );
             setTensor(tensor);
@@ -122,13 +111,6 @@ function ImageDetail({ params: { imageId } }: PageProps) {
         };
 
         init_model();
-        // Load the image
-        // loadImage(image_src);
-
-        // Load the Segment Anything pre-computed embedding
-        // Promise.resolve(loadNpyTensor(IMAGE_EMBEDDING, "float32")).then(
-        //   (embedding) => setTensor(embedding)
-        // );
       });
   }, []);
 
@@ -169,6 +151,15 @@ function ImageDetail({ params: { imageId } }: PageProps) {
     }
   };
   return <Stage />;
+}
+
+function server_end_point(path: string | null): string {
+  var end_point: string =
+    process.env.NODE_ENV === "development"
+      ? "http://127.0.0.1:8000"
+      : "https://your-production-endpoint.com"; // ToDo
+  end_point = path === null ? end_point : `${end_point}/${path}`;
+  return end_point;
 }
 
 export default ImageDetail;

@@ -21,7 +21,7 @@ const Tool = ({ handleMouseMove }: ToolProps) => {
   // width or the height of the page and setup a ResizeObserver to
   // monitor changes in the size of the page
   const [shouldFitToWidth, setShouldFitToWidth] = useState(true);
-  const bodyEl = document.body;
+  const bodyEl = typeof document !== "undefined" ? document.body : null;
   const fitToPage = () => {
     if (!image) return;
     const imageAspectRatio = image.width / image.height;
@@ -37,6 +37,7 @@ const Tool = ({ handleMouseMove }: ToolProps) => {
   });
   useEffect(() => {
     fitToPage();
+    if (bodyEl === null) return;
     resizeObserver.observe(bodyEl);
     return () => {
       resizeObserver.unobserve(bodyEl);

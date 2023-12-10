@@ -27,7 +27,11 @@ export function get_file_preview(
 }
 
 export function get_image(image_id: string): string {
-  const client = init_client("https://cloud.appwrite.io/v1");
+  const appwrite_end_point = process.env.APPWRITE_PUBLIC_END_POINT;
+  if (!appwrite_end_point) {
+    throw new Error("Bucket ID not provided");
+  }
+  const client = init_client(appwrite_end_point);
   const storage_ref = init_storage(client);
   return get_file_preview(storage_ref, image_id);
 }

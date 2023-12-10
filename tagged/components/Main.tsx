@@ -1,7 +1,7 @@
 import Image from "next/image";
 import localFont from "next/font/local";
 import Link from "next/link";
-import { Client, Storage } from "appwrite";
+import { Storage } from "appwrite";
 import { init_client, init_storage, get_file_preview } from "@/app/appwrite";
 import AppContextProvider from "./hooks/context";
 
@@ -21,11 +21,12 @@ const fetchAllImages = async (storage: Storage, bucket_id: string) => {
 };
 
 async function Main() {
-  const bucket_id: string | undefined = process.env.IMAGES_BUCKET_ID;
-  if (!bucket_id) {
+  const appwrite_end_point = process.env.APPWRITE_PUBLIC_END_POINT;
+  const bucket_id = process.env.IMAGES_BUCKET_ID;
+  if (!bucket_id || !appwrite_end_point) {
     throw new Error("ID not provided");
   }
-  const client = init_client("https://cloud.appwrite.io/v1");
+  const client = init_client(appwrite_end_point);
   const storage_ref = init_storage(client);
   const images = await fetchAllImages(storage_ref, bucket_id)
     .then((data) => {

@@ -13,12 +13,8 @@ const nextConfig = {
         patterns: [
           {
             from: "node_modules/onnxruntime-web/dist/*.wasm",
-            to: "static/chunks/[name][ext]",
+            to: "static/chunks/app/images/[imageId]/[name][ext]",
           },
-          // {
-          //   from: "node_modules/onnxruntime-web/dist/*.wasm",
-          //   to: "public/wasm",
-          // },
         ],
       })
     );
